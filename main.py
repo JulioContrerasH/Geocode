@@ -73,3 +73,29 @@ for address in formatted_addresses:
     
 archivo_salida = 'D:/CURSOS_2022/Repos/Geocode/data/direcciones_modificado.xlsx'
 df.to_excel(archivo_salida, index=False) 
+
+############################
+
+# Cargar el DataFrame desde el archivo Excel
+df = pd.read_excel('D:/CURSOS_2022/Repos/Geocode/data/direcciones_actualizadas.xlsx')
+
+def obtener_direccion_desde_coordenadas(latitud, longitud):
+    geolocator = Nominatim(user_agent="my_geocoder")
+
+    try:
+        location = geolocator.reverse((latitud, longitud), timeout=10)
+        if location:
+            return location.address
+        else:
+            return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+# Aplicar la función a las columnas LAT y LONG y guardar los resultados en una nueva columna
+df['DIRECCION'] = df.apply(lambda row: obtener_direccion_desde_coordenadas(row['LAT'], row['LONG']), axis=1)
+df.to_excel('D:/CURSOS_2022/Repos/Geocode/data/direcciones_actualizadas2.xlsx', index=False)
+
+
+
+
